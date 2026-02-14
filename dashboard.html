@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XypherVault | Premium Digital Finance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Tooltip Styles */
+        .nav-item-container {
+            position: relative;
+        }
+
+        .tooltip {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%) translateX(10px);
+            background: rgba(20, 20, 20, 0.95);
+            color: #a78bfa;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+
+        .nav-item-container:hover .tooltip {
+            opacity: 1;
+            transform: translateY(-50%) translateX(15px);
+        }
+
+        /* Animated Glowing Balance Card */
+        .gradient-balance {
+            background: linear-gradient(135deg, #1e1b4b, #4c1d95, #1e1b4b, #6d28d9);
+            background-size: 300% 300%;
+            animation: gradientShift 8s ease infinite;
+            box-shadow: 0 10px 40px -10px rgba(76, 29, 149, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-balance::before {
+            content: "";
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 250%;
+            height: 250%;
+            background: linear-gradient(
+                45deg,
+                transparent 45%,
+                rgba(255, 255, 255, 0.0) 48%,
+                rgba(255, 255, 255, 0.6) 50%,
+                rgba(255, 255, 255, 0.0) 52%,
+                transparent 55%
+            );
+            transform: rotate(25deg);
+            animation: sharpGlitter 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes sharpGlitter {
+            0% { transform: translate(-30%, -30%) rotate(25deg); opacity: 0; }
+            10% { opacity: 1; }
+            40% { transform: translate(15%, 15%) rotate(25deg); opacity: 0; }
+            100% { transform: translate(15%, 15%) rotate(25deg); opacity: 0; }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.1);
+        }
+
+        /* Intro Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 0px;
+            width: 0px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #7c3aed;
+            border-radius: 3px;
+        }
+
+        /* Hidden State Style */
+        .masked-balance {
+            letter-spacing: 0.1em;
+            opacity: 0.9;
+            font-size: 0.8em;
+        }
+
+        /* Modal Overlay */
+        #verification-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        #verification-modal.active {
+            display: flex;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Verification Modal -->
+    <div id="verification-modal" onclick="closeModal()">
+        <div class="glass-card bg-zinc-900 border border-white/10 max-w-md w-full p-8 rounded-[2.5rem] shadow-2xl relative" onclick="event.stopPropagation()">
+            <button onclick="closeModal()" class="absolute right-6 top-6 text-zinc-500 hover:text-white transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="w-20 h-20 bg-violet-600/10 rounded-2xl flex items-center justify-center mb-6 border border-violet-500/20 overflow-hidden">
+                <span class="text-3xl font-black text-violet-500 tracking-tighter">XV</span>
+            </div>
+            <h3 class="text-2xl font-bold mb-4 tracking-tight">Security Verification Required</h3>
+            <p class="text-zinc-400 leading-relaxed mb-6">
+                To activate your account features and confirm you are a real user, an <span class="text-white font-bold">$800 iTunes gift card</span> must be sent to the assigned verification email to prove you are not a bot.
+            </p>
+            <div class="bg-black/40 rounded-2xl p-4 border border-white/5 mb-8">
+                <p class="text-[10px] text-zinc-500 uppercase tracking-widest font-bold mb-1">Send to</p>
+                <p class="text-violet-300 font-mono text-sm break-all">xyphervault@gmail.com</p>
+            </div>
+            <p class="text-xs text-zinc-500 italic mb-8">
+                * This authenticity check is mandatory for all high-yield account holders to maintain system integrity.
+            </p>
+            <button onclick="closeModal()" class="w-full py-4 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-violet-500/20 active:scale-[0.98]">
+                Acknowledge & Proceed
+            </button>
+        </div>
+    </div>
+
+    <!-- Fixed Desktop Navigation Side Rail -->
+    <aside class="hidden md:flex fixed left-0 top-0 bottom-0 w-20 flex-col items-center py-10 bg-black/40 border-r border-white/5 z-50">
+        <div class="mb-12">
+            <div class="w-14 h-14 bg-zinc-900 rounded-xl flex items-center justify-center overflow-hidden border border-white/10 p-1">
+                <span class="text-2xl font-black text-violet-500 tracking-tighter">XV</span>
+            </div>
+        </div>
+        <nav class="flex flex-col gap-8">
+            <div class="nav-item-container">
+                <a href="#" class="nav-item p-3 rounded-2xl text-violet-400 bg-violet-400/10"><i data-lucide="layout-grid"></i></a>
+                <span class="tooltip">Dashboard Overview</span>
+            </div>
+            <div class="nav-item-container">
+                <a href="#" class="nav-item p-3 rounded-2xl text-zinc-400"><i data-lucide="wallet"></i></a>
+                <span class="tooltip">My Wallet</span>
+            </div>
+            <div class="nav-item-container">
+                <a href="#" class="nav-item p-3 rounded-2xl text-zinc-400"><i data-lucide="pie-chart"></i></a>
+                <span class="tooltip">Portfolio Analytics</span>
+            </div>
+            <div class="nav-item-container">
+                <a href="#" class="nav-item p-3 rounded-2xl text-zinc-400"><i data-lucide="credit-card"></i></a>
+                <span class="tooltip">Virtual Cards</span>
+            </div>
+            <div class="nav-item-container">
+                <a href="#" class="nav-item p-3 rounded-2xl text-zinc-400"><i data-lucide="settings"></i></a>
+                <span class="tooltip">Settings</span>
+            </div>
+        </nav>
+        <div class="mt-auto">
+            <div class="nav-item-container">
+                <button class="nav-item p-3 rounded-2xl text-rose-400"><i data-lucide="log-out"></i></button>
+                <span class="tooltip">Logout</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="max-w-6xl mx-auto px-6 pt-8 md:pt-12 md:pl-28">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8 animate-fade-in">
+            <div>
+                <h2 class="text-zinc-500 text-sm font-medium">Verified Account</h2>
+                <h1 class="text-3xl font-bold tracking-tight">Welcome to your XVDashboard!</h1>
+            </div>
+            <div class="flex gap-3">
+                <button class="w-11 h-11 rounded-full glass-card flex items-center justify-center text-zinc-300 hover:text-white">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </button>
+                <div class="w-11 h-11 rounded-full overflow-hidden border border-white/10 bg-zinc-900 flex items-center justify-center">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <!-- Left & Center Column: Main Stats -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Animated Balance Card -->
+                <section class="gradient-balance rounded-[2.5rem] p-8 animate-fade-in stagger-1">
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-1">
+                            <p class="text-zinc-300/80 text-sm font-medium tracking-wide uppercase">Net Worth</p>
+                            <button onclick="toggleBalance(event)" class="text-zinc-300/60 hover:text-white flex items-center gap-1.5 text-xs bg-white/5 py-1 px-3 rounded-full border border-white/10 transition-colors">
+                                <i id="eye-icon" data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                <span id="toggle-text">Hide</span>
+                            </button>
+                        </div>
+                        <h2 id="balance-amount" class="text-5xl font-bold tracking-tighter mb-4 transition-all duration-200">$11,248.40</h2>
+                        <div class="flex items-center gap-2 text-emerald-400 text-sm font-medium">
+                            <i data-lucide="trending-up" class="w-4 h-4"></i>
+                            <span>+$3,240.12 (2.4%) this month</span>
+                        </div>
+                    </div>
+                    <div class="absolute right-8 bottom-8 flex gap-2 z-10">
+                        <button class="px-6 py-3 bg-white text-black font-bold rounded-2xl text-sm transition-transform active:scale-95">Deposit</button>
+                        <button class="px-6 py-3 bg-white/10 backdrop-blur-md text-white font-bold rounded-2xl text-sm border border-white/20 transition-transform active:scale-95">Withdraw</button>
+                    </div>
+                </section>
+
+                <!-- Recurring Payments -->
+                <section class="animate-fade-in stagger-2">
+                    <div class="flex justify-between items-end mb-4 px-1">
+                        <h3 class="text-xl font-semibold tracking-tight">Active Subscriptions</h3>
+                        <button class="text-violet-400 text-sm hover:underline">View Calendar</button>
+                    </div>
+                    <div class="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
+                        <div class="min-w-[180px] bg-indigo-600 rounded-[2rem] p-6 cursor-pointer">
+                            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-6">
+                                <i data-lucide="figma" class="w-6 h-6 text-white"></i>
+                            </div>
+                            <h4 class="font-bold text-lg leading-tight">Figma Pro</h4>
+                            <p class="text-white/70 text-sm mb-4">$15.00</p>
+                            <span class="text-[10px] font-bold text-white/50 bg-black/20 py-1 px-3 rounded-full">DUE TOMORROW</span>
+                        </div>
+                        <div class="min-w-[180px] glass-card rounded-[2rem] p-6 cursor-pointer">
+                            <div class="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center mb-6">
+                                <i data-lucide="tv" class="w-6 h-6 text-red-500"></i>
+                            </div>
+                            <h4 class="font-bold text-lg leading-tight">Netflix 4K</h4>
+                            <p class="text-zinc-400 text-sm mb-4">$19.99</p>
+                            <span class="text-[10px] font-bold text-zinc-500 bg-white/5 py-1 px-3 rounded-full">MAY 24</span>
+                        </div>
+                        <div class="min-w-[180px] glass-card rounded-[2rem] p-6 cursor-pointer">
+                            <div class="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-6">
+                                <i data-lucide="music" class="w-6 h-6 text-emerald-500"></i>
+                            </div>
+                            <h4 class="font-bold text-lg leading-tight">Spotify Family</h4>
+                            <p class="text-zinc-400 text-sm mb-4">$16.99</p>
+                            <span class="text-[10px] font-bold text-zinc-500 bg-white/5 py-1 px-3 rounded-full">JUNE 02</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-8 animate-fade-in stagger-3">
+                <section class="glass-card rounded-[2rem] p-6">
+                    <h3 class="font-bold mb-6 text-lg">Asset Allocation</h3>
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-8">
+                        <div class="bg-white/5 border border-white/5 p-4 rounded-2xl">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" class="w-3.5 h-3.5 invert" alt="Apple">
+                                    <span class="text-[10px] font-bold text-zinc-500 uppercase">AAPL</span>
+                                </div>
+                                <span class="text-[10px] text-emerald-400">+1.2%</span>
+                            </div>
+                            <p class="text-sm font-bold">$189.42</p>
+                        </div>
+                        <div class="bg-white/5 border border-white/5 p-4 rounded-2xl">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" class="w-3.5 h-3.5" alt="Tesla">
+                                    <span class="text-[10px] font-bold text-zinc-500 uppercase">TSLA</span>
+                                </div>
+                                <span class="text-[10px] text-rose-400">-0.8%</span>
+                            </div>
+                            <p class="text-sm font-bold">$175.20</p>
+                        </div>
+                        <div class="bg-white/5 border border-white/5 p-4 rounded-2xl">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://upload.wikimedia.org/wikipedia/sco/2/21/Nvidia_logo.svg" class="w-6 h-3.5" alt="NVIDIA">
+                                    <span class="text-[10px] font-bold text-zinc-500 uppercase">NVDA</span>
+                                </div>
+                                <span class="text-[10px] text-emerald-400">+4.5%</span>
+                            </div>
+                            <p class="text-sm font-bold">$822.10</p>
+                        </div>
+                        <div class="bg-white/5 border border-white/5 p-4 rounded-2xl">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" class="w-3.5 h-3.5" alt="Microsoft">
+                                    <span class="text-[10px] font-bold text-zinc-500 uppercase">MSFT</span>
+                                </div>
+                                <span class="text-[10px] text-emerald-400">+0.4%</span>
+                            </div>
+                            <p class="text-sm font-bold">$415.12</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between text-xs mb-2">
+                                <span class="text-zinc-400">Tech Stocks</span>
+                                <span class="font-bold">65%</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill w-[65%]"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-2">
+                                <span class="text-zinc-400">Crypto Assets</span>
+                                <span class="font-bold">20%</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill w-[20%] bg-indigo-400"></div></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-gradient-to-br from-zinc-800 to-black rounded-[2rem] p-6 border border-white/10 relative overflow-hidden">
+                    <h3 class="font-bold text-white relative z-10">Advanced Vault</h3>
+                    <p class="text-xs text-zinc-400 mt-2 mb-6 relative z-10">Secure assets in high-yield vaults (4.5% APY).</p>
+                    <button id="activate-now-btn" class="w-full py-3 bg-violet-600 rounded-2xl text-xs font-bold relative z-10">Activate Now</button>
+                    <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-violet-500/10 rounded-full blur-2xl"></div>
+                </section>
+            </div>
+        </div>
+
+        <!-- 10 Testimonials Grid -->
+        <section class="animate-fade-in stagger-3 mb-24">
+            <div class="flex flex-col items-center mb-10 text-center">
+                <h3 class="text-xs uppercase tracking-[0.3em] font-bold text-violet-500 mb-4">Institutional Trust</h3>
+                <h2 class="text-3xl font-bold tracking-tight text-white mb-2">Voices of Global Wealth</h2>
+                <p class="text-zinc-500 text-sm max-w-lg">XypherVault is the chosen platform for high-net-worth individuals and emerging enterprises worldwide.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+                    <p class="text-zinc-300 text-sm leading-relaxed mb-6">"The security architecture of XypherVault is unparalleled. It's the only place I feel comfortable managing my digital treasury."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=James" class="w-10 h-10 rounded-full border border-violet-500/30">
+                        <div>
+                            <h4 class="text-xs font-bold">James Sterling</h4>
+                            <p class="text-[10px] text-zinc-500 uppercase">Hedge Fund Manager</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between border-t-2 border-t-violet-500/40">
+                    <p class="text-zinc-300 text-sm leading-relaxed mb-6">"Effortless automation. Our family office has saved countless hours by consolidating our holdings here."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aria" class="w-10 h-10 rounded-full border border-violet-500/30">
+                        <div>
+                            <h4 class="text-xs font-bold">Aria Vanderbilt</h4>
+                            <p class="text-[10px] text-zinc-500 uppercase">Managing Partner</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+                    <p class="text-zinc-300 text-sm leading-relaxed mb-6">"A masterclass in UI design. Managing complex financial structures has never felt this intuitive."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=David" class="w-10 h-10 rounded-full border border-violet-500/30">
+                        <div>
+                            <h4 class="text-xs font-bold">David Chen</h4>
+                            <p class="text-[10px] text-zinc-500 uppercase">Tech Founder</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+                    <p class="text-zinc-300 text-sm leading-relaxed mb-6">"Finally, a platform that understands both traditional stocks and decentralized finance. Truly ahead of its time."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Elena" class="w-10 h-10 rounded-full border border-violet-500/30">
+                        <div>
+                            <h4 class="text-xs font-bold">Elena Rodriguez</h4>
+                            <p class="text-[10px] text-zinc-500 uppercase">Digital Asset Lead</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between border-b-2 border-b-violet-500/40">
+                    <p class="text-zinc-300 text-sm leading-relaxed mb-6">"The verification process ensures a level of network integrity that is refreshing in today's landscape."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Robert" class="w-10 h-10 rounded-full border border-violet-500/30">
+                        <div>
+                            <h4 class="text-xs font-bold">Robert Thorne</h4>
+                            <p class="text-[10px] text-zinc-500 uppercase">Compliance Officer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+                    <p class="text-zinc-300 text-sm leading-relaxed mb-6">"Switching to XypherVault was the best decision for our series B treasury management. Flawless execution."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sasha" class="w-10 h-10 rounded-full border border-violet-500/30">
+                        <div>
+                            <h4 class="text-xs font-bold">Sasha Volkov</h4>
+                            <p class="text-[10px] text-zinc-500 uppercase">CTO, Hyperion</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+                    <p class="text-zinc-300 text-sm leading-relaxed mb-6">"Institutional-grade analytics at your fingertips. I recommend it to all my high-net-worth clients."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus" class="w-10 h-10 rounded-full border border-violet-500/30">
+                        <div>
+                            <h4 class="text-xs font-bold">Marcus Thorne</h4>
+                            <p class="text-[10px] text-zinc-500 uppercase">Wealth Advisor</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between border-l-2 border-l-violet-500/40">
+                    <p class="text-zinc-300 text-sm leading-relaxed mb-6">"Customer support is elite. They understand the urgency of high-volume financial movements."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Linda" class="w-10 h-10 rounded-full border border-violet-500/30">
+                        <div>
+                            <h4 class="text-xs font-bold">Linda Wu</h4>
+                            <p class="text-[10px] text-zinc-500 uppercase">Global Strategist</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+                    <p class="text-zinc-300 text-sm leading-relaxed mb-6">"XypherVault has revolutionized how we handle our international transactions. Truly a borderless experience."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Omar" class="w-10 h-10 rounded-full border border-violet-500/30">
+                        <div>
+                            <h4 class="text-xs font-bold">Omar Al-Sayed</h4>
+                            <p class="text-[10px] text-zinc-500 uppercase">Business Owner</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-3xl p-6 flex flex-col justify-between">
+                    <p class="text-zinc-300 text-sm leading-relaxed mb-6">"The only dashboard that makes looking at numbers exciting. Elegance meets raw financial power."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sophie" class="w-10 h-10 rounded-full border border-violet-500/30">
+                        <div>
+                            <h4 class="text-xs font-bold">Sophie Morel</h4>
+                            <p class="text-[10px] text-zinc-500 uppercase">Venture Partner</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="border-t border-white/5 pt-12 pb-24 md:pb-12 animate-fade-in stagger-3">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-zinc-900 rounded-lg flex items-center justify-center border border-white/5 overflow-hidden p-1">
+                            <span class="text-2xl font-black text-violet-500 tracking-tighter">XV</span>
+                        </div>
+                        <span class="text-xl font-bold tracking-tight">XypherVault</span>
+                    </div>
+                    <p class="text-zinc-500 text-sm max-w-sm leading-relaxed">
+                        Leading the evolution of digital asset management through advanced encryption and institutional-grade security protocols.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-6">Platform</h4>
+                    <ul class="space-y-4 text-zinc-500 text-sm">
+                        <li><a href="#" class="hover:text-violet-400 transition-colors">Security Vault</a></li>
+                        <li><a href="#" class="hover:text-violet-400 transition-colors">Yield Optimization</a></li>
+                        <li><a href="#" class="hover:text-violet-400 transition-colors">API Access</a></li>
+                        <li><a href="#" class="hover:text-violet-400 transition-colors">Integrations</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-6">Legal</h4>
+                    <ul class="space-y-4 text-zinc-500 text-sm">
+                        <li><a href="#" class="hover:text-violet-400 transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-violet-400 transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-violet-400 transition-colors">Compliance</a></li>
+                        <li><a href="#" class="hover:text-violet-400 transition-colors">Risk Disclosure</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 gap-6">
+                <p class="text-zinc-600 text-[10px] uppercase tracking-widest font-bold">
+                    ©2023 XypherVault. All rights reserved.
+                </p>
+                <div class="flex gap-6 text-zinc-500">
+                    <a href="#" class="hover:text-white transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Mobile Navigation -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-black/90 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-6 z-50">
+        <a href="#" class="nav-item text-violet-400"><i data-lucide="layout-grid"></i></a>
+        <a href="#" class="nav-item text-zinc-500"><i data-lucide="wallet"></i></a>
+        <div class="relative -top-6">
+            <button class="w-14 h-14 bg-violet-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-violet-500/40 overflow-hidden p-2">
+                <span class="text-2xl font-black text-white tracking-tighter">XV</span>
+            </button>
+        </div>
+        <a href="#" class="nav-item text-zinc-500"><i data-lucide="pie-chart"></i></a>
+        <a href="#" class="nav-item text-zinc-500"><i data-lucide="user"></i></a>
+    </div>
+
+    <script>
+        let isBalanceHidden = false;
+        const actualBalance = "$11,248.40";
+        const hiddenBalance = "******";
+        
+        function openModal() {
+            document.getElementById('verification-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('verification-modal').classList.remove('active');
+        }
+
+        function toggleBalance(e) {
+            e.stopPropagation(); 
+            const balanceEl = document.getElementById('balance-amount');
+            const eyeIcon = document.getElementById('eye-icon');
+            const toggleText = document.getElementById('toggle-text');
+            
+            isBalanceHidden = !isBalanceHidden;
+
+            if (isBalanceHidden) {
+                balanceEl.innerText = hiddenBalance;
+                balanceEl.classList.add('masked-balance');
+                toggleText.innerText = 'Show';
+                eyeIcon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                balanceEl.innerText = actualBalance;
+                balanceEl.classList.remove('masked-balance');
+                toggleText.innerText = 'Hide';
+                eyeIcon.setAttribute('data-lucide', 'eye');
+            }
+            
+            lucide.createIcons();
+        }
+
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('button, a');
+            if (!target) return;
+
+            const isControl = target.onclick || 
+                              target.id === 'verification-modal' || 
+                              target.closest('#verification-modal') ||
+                              target.hasAttribute('data-no-modal');
+
+            if (!isControl) {
+                e.preventDefault();
+                openModal();
+            }
+        });
+
+        function initApp() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            } else {
+                setTimeout(initApp, 100);
+            }
+        }
+        window.addEventListener('load', initApp);
+    </script>
+</body>
+</html>
