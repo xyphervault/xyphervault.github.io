@@ -350,11 +350,12 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 mb-12">
                 <div class="lg:col-span-2 space-y-6 md:space-y-8">
-                    <section class="gradient-balance rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 animate-fade-in stagger-1 hover:scale-[1.01] transition-transform duration-500">
+                    <!-- Balance Card -->
+                    <section class="gradient-balance rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 animate-fade-in stagger-1">
                         <div class="relative z-10">
                             <div class="flex items-center justify-between mb-2">
                                 <p class="text-zinc-300/80 text-xs md:text-sm font-medium tracking-wide uppercase">Net Worth</p>
-                                <button onclick="toggleBalance(event)" class="text-zinc-300/60 hover:text-white flex items-center gap-1.5 text-xs bg-white/5 py-1 px-3 rounded-full border border-white/10 transition-all hover:bg-white/10">
+                                <button onclick="toggleBalance(event)" class="text-zinc-300/60 hover:text-white flex items-center gap-1.5 text-xs bg-white/5 py-1 px-3 rounded-full border border-white/10 transition-all">
                                     <i id="eye-icon" data-lucide="eye" class="w-3.5 h-3.5"></i>
                                     <span id="toggle-text">Hide</span>
                                 </button>
@@ -371,65 +372,81 @@
                         </div>
                     </section>
 
+                    <!-- NEW: Live Market Stocks Section -->
                     <section class="animate-fade-in stagger-2">
                         <div class="flex justify-between items-end mb-4 px-1">
-                            <h3 class="text-lg md:text-xl font-semibold tracking-tight">Active Subscriptions</h3>
-                            <button class="text-violet-400 text-sm hover:text-violet-300 transition-colors">View Calendar</button>
+                            <h3 class="text-lg md:text-xl font-semibold tracking-tight">Live Markets</h3>
+                            <button class="text-violet-400 text-sm hover:text-violet-300 transition-colors">Trade Assets</button>
                         </div>
-                        <div class="flex gap-4 overflow-x-auto pb-4 custom-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-                            <div class="min-w-[160px] md:min-w-[180px] bg-indigo-600 rounded-[2rem] p-5 md:p-6 cursor-pointer snap-start transition-all hover:scale-105 hover:rotate-1 hover:brightness-110">
-                                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-6">
-                                    <i data-lucide="figma" class="w-6 h-6 text-white"></i>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="glass-card p-5 rounded-[1.5rem] flex items-center justify-between group cursor-pointer">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center group-hover:bg-orange-500 transition-colors">
+                                        <i data-lucide="bitcoin" class="w-6 h-6 text-orange-500 group-hover:text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold">Bitcoin</h4>
+                                        <p class="text-xs text-zinc-500">BTC / USD</p>
+                                    </div>
                                 </div>
-                                <h4 class="font-bold text-lg leading-tight">Figma Pro</h4>
-                                <p class="text-white/70 text-sm mb-4">$15.00</p>
-                                <span class="text-[10px] font-bold text-white/50 bg-black/20 py-1 px-3 rounded-full">DUE TOMORROW</span>
+                                <div class="text-right">
+                                    <p class="font-bold text-sm">$64,241.02</p>
+                                    <p class="text-[10px] text-emerald-400 font-bold">+4.28%</p>
+                                </div>
                             </div>
-                            <div class="min-w-[160px] md:min-w-[180px] glass-card rounded-[2rem] p-5 md:p-6 cursor-pointer snap-start hover:scale-105 hover:rotate-1">
-                                <div class="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center mb-6">
-                                    <i data-lucide="tv" class="w-6 h-6 text-red-500"></i>
+                            <div class="glass-card p-5 rounded-[1.5rem] flex items-center justify-between group cursor-pointer">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center group-hover:bg-blue-500 transition-colors">
+                                        <i data-lucide="layers" class="w-6 h-6 text-blue-500 group-hover:text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold">Ethereum</h4>
+                                        <p class="text-xs text-zinc-500">ETH / USD</p>
+                                    </div>
                                 </div>
-                                <h4 class="font-bold text-lg leading-tight">Netflix 4K</h4>
-                                <p class="text-zinc-400 text-sm mb-4">$19.99</p>
-                                <span class="text-[10px] font-bold text-zinc-500 bg-white/5 py-1 px-3 rounded-full">MAY 24</span>
+                                <div class="text-right">
+                                    <p class="font-bold text-sm">$3,450.15</p>
+                                    <p class="text-[10px] text-emerald-400 font-bold">+2.15%</p>
+                                </div>
                             </div>
-                            <div class="min-w-[160px] md:min-w-[180px] glass-card rounded-[2rem] p-5 md:p-6 cursor-pointer snap-start hover:scale-105 hover:rotate-1">
-                                <div class="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-6">
-                                    <i data-lucide="music" class="w-6 h-6 text-emerald-500"></i>
+                            <div class="glass-card p-5 rounded-[1.5rem] flex items-center justify-between group cursor-pointer">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-zinc-100 rounded-xl flex items-center justify-center group-hover:bg-zinc-100 transition-colors">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" class="w-5 h-5" alt="Apple">
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold">Apple Inc.</h4>
+                                        <p class="text-xs text-zinc-500">AAPL / NASD</p>
+                                    </div>
                                 </div>
-                                <h4 class="font-bold text-lg leading-tight">Spotify Family</h4>
-                                <p class="text-zinc-400 text-sm mb-4">$16.99</p>
-                                <span class="text-[10px] font-bold text-zinc-500 bg-white/5 py-1 px-3 rounded-full">JUNE 02</span>
+                                <div class="text-right">
+                                    <p class="font-bold text-sm">$192.34</p>
+                                    <p class="text-[10px] text-rose-400 font-bold">-0.12%</p>
+                                </div>
+                            </div>
+                            <div class="glass-card p-5 rounded-[1.5rem] flex items-center justify-between group cursor-pointer">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center group-hover:brightness-110">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" class="w-5 h-5 invert" alt="Tesla">
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold">Tesla Motor</h4>
+                                        <p class="text-xs text-zinc-500">TSLA / NASD</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-sm">$178.50</p>
+                                    <p class="text-[10px] text-emerald-400 font-bold">+1.84%</p>
+                                </div>
                             </div>
                         </div>
                     </section>
                 </div>
 
-                <div class="space-y-6 md:space-y-8 animate-fade-in stagger-3">
-                    <section class="glass-card rounded-[2rem] p-6">
+                <div class="space-y-6 md:space-y-8">
+                    <!-- Allocation Section -->
+                    <section class="glass-card rounded-[2rem] p-6 animate-fade-in stagger-3">
                         <h3 class="font-bold mb-6 text-lg">Asset Allocation</h3>
-                        <div class="grid grid-cols-2 gap-3 mb-8">
-                            <div class="bg-white/5 border border-white/5 p-4 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group">
-                                <div class="flex items-center justify-between mb-2">
-                                    <div class="flex items-center gap-2">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" class="w-3.5 h-3.5 invert" alt="Apple">
-                                        <span class="text-[10px] font-bold text-zinc-500 uppercase">AAPL</span>
-                                    </div>
-                                    <span class="text-[10px] text-emerald-400">+1.2%</span>
-                                </div>
-                                <p class="text-sm font-bold">$189.42</p>
-                            </div>
-                            <div class="bg-white/5 border border-white/5 p-4 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group">
-                                <div class="flex items-center justify-between mb-2">
-                                    <div class="flex items-center gap-2">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" class="w-3.5 h-3.5" alt="Tesla">
-                                        <span class="text-[10px] font-bold text-zinc-500 uppercase">TSLA</span>
-                                    </div>
-                                    <span class="text-[10px] text-rose-400">-0.8%</span>
-                                </div>
-                                <p class="text-sm font-bold">$175.20</p>
-                            </div>
-                        </div>
                         <div class="space-y-6">
                             <div>
                                 <div class="flex justify-between text-xs mb-2">
@@ -437,6 +454,51 @@
                                     <span class="font-bold">65%</span>
                                 </div>
                                 <div class="progress-bar"><div class="progress-fill w-0" data-width="65%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs mb-2">
+                                    <span class="text-zinc-400">Crypto Assets</span>
+                                    <span class="font-bold">25%</span>
+                                </div>
+                                <div class="progress-bar"><div class="progress-fill w-0" data-width="25%" style="background:#f59e0b"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs mb-2">
+                                    <span class="text-zinc-400">Liquid Cash</span>
+                                    <span class="font-bold">10%</span>
+                                </div>
+                                <div class="progress-bar"><div class="progress-fill w-0" data-width="10%" style="background:#10b981"></div></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- NEW: Member Testimonials Section -->
+                    <section class="animate-fade-in stagger-4">
+                        <h3 class="font-bold mb-4 text-lg px-1">Community Voices</h3>
+                        <div class="space-y-4">
+                            <div class="glass-card p-5 rounded-[1.5rem] border-l-4 border-violet-500">
+                                <p class="text-xs text-zinc-300 italic mb-4 leading-relaxed">
+                                    "The encryption level here is unlike anything I've seen in retail banking. My portfolio has never felt safer."
+                                </p>
+                                <div class="flex items-center gap-3">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Erik" class="w-8 h-8 rounded-full bg-zinc-800" alt="User">
+                                    <div>
+                                        <p class="text-[10px] font-bold">Erik Vandez</p>
+                                        <p class="text-[8px] text-zinc-500 uppercase font-black">Hedge Fund Manager</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="glass-card p-5 rounded-[1.5rem] border-l-4 border-indigo-500">
+                                <p class="text-xs text-zinc-300 italic mb-4 leading-relaxed">
+                                    "XypherVault is the bridge to financial freedom. The verification process was straightforward and professional."
+                                </p>
+                                <div class="flex items-center gap-3">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" class="w-8 h-8 rounded-full bg-zinc-800" alt="User">
+                                    <div>
+                                        <p class="text-[10px] font-bold">Sarah Jenkins</p>
+                                        <p class="text-[8px] text-zinc-500 uppercase font-black">Private Investor</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -468,20 +530,16 @@
         let isBalanceHidden = false;
         const actualBalance = "$11,248.40";
         const hiddenBalance = "******";
-        
-        // --- DEVICE PERSISTENCE LOGIC ---
         const SIGNUP_KEY = 'xypher_vault_signed_up';
 
         window.onload = function() {
             const hasSignedUp = localStorage.getItem(SIGNUP_KEY);
-            
             if (!hasSignedUp) {
                 document.body.classList.add('locked');
                 document.getElementById('signup-overlay').classList.add('active');
             } else {
                 unlockSite();
             }
-            
             initApp();
         };
 
@@ -492,6 +550,7 @@
             const animatedElements = document.querySelectorAll('.animate-fade-in, .animate-side-in');
             animatedElements.forEach(el => {
                 el.style.animationPlayState = 'running';
+                el.style.opacity = '1';
             });
             
             setTimeout(() => {
@@ -501,11 +560,9 @@
             }, 500);
         }
 
-        // --- PASSWORD VISIBILITY TOGGLE ---
         function togglePasswordVisibility(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
-            
             if (input.type === 'password') {
                 input.type = 'text';
                 icon.setAttribute('data-lucide', 'eye-off');
@@ -516,10 +573,8 @@
             lucide.createIcons();
         }
 
-        // --- SIGNUP FORM HANDLER ---
         document.getElementById('signup-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const password = document.getElementById('signup-password').value;
             const confirm = document.getElementById('signup-password-confirm').value;
             const errorMsg = document.getElementById('password-error');
@@ -531,18 +586,13 @@
 
             errorMsg.classList.add('hidden');
             localStorage.setItem(SIGNUP_KEY, 'true');
-            
             const card = document.getElementById('signup-card');
             card.style.transform = 'scale(0.95) translateY(20px)';
             card.style.opacity = '0';
             card.style.transition = 'all 0.5s ease';
-            
-            setTimeout(() => {
-                unlockSite();
-            }, 500);
+            setTimeout(() => { unlockSite(); }, 500);
         });
 
-        // --- DASHBOARD LOGIC ---
         function openModal() {
             document.getElementById('verification-modal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -560,9 +610,7 @@
             const balanceEl = document.getElementById('balance-amount');
             const eyeIcon = document.getElementById('eye-icon');
             const toggleText = document.getElementById('toggle-text');
-            
             balanceEl.style.opacity = "0";
-            
             setTimeout(() => {
                 isBalanceHidden = !isBalanceHidden;
                 if (isBalanceHidden) {
@@ -583,17 +631,14 @@
 
         document.addEventListener('click', function(e) {
             if (document.body.classList.contains('locked')) return;
-
             const target = e.target.closest('button, a');
             if (!target) return;
-
             const isControl = target.onclick || 
                               target.id === 'verification-modal' || 
                               target.closest('#verification-modal') ||
                               target.id === 'signup-form' ||
                               target.closest('#signup-form') ||
                               target.getAttribute('type') === 'button';
-
             if (!isControl) {
                 e.preventDefault();
                 openModal();
